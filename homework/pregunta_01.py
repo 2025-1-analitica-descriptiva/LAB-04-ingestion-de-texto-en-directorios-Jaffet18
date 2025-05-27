@@ -108,7 +108,9 @@ def pregunta_01():
                                 'target': sentiment
                             })
                     except Exception as e:
-        
+                        # Puede registrar el error o simplemente pasar
+                        pass
+
         # Guardar CSV
         if data:
             df = pd.DataFrame(data)
