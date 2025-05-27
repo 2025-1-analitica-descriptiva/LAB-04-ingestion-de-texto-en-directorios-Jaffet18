@@ -4,7 +4,8 @@
 """
 Escriba el codigo que ejecute la accion solicitada en cada pregunta.
 """
-
+import os
+import pandas as pd
 
 def pregunta_01():
     """
@@ -71,3 +72,54 @@ def pregunta_01():
 
 
     """
+
+    # Se guardan las rutas en variables
+    input_base = 'files/input'
+    output_dir = 'files/output'
+    
+    # Se crea un directorio de salida si no existe
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Se inicia con el procesamiento de train y test
+    for dataset in ['train', 'test']:
+        data = []
+        dataset_path = os.path.join(input_base, dataset)
+        
+        if not os.path.exists(dataset_path):
+            continue
+        
+        for sentiment in ['positive', 'negative', 'neutral']:
+            sentiment_path = os.path.join(dataset_path, sentiment)
+            
+            if not os.path.exists(sentiment_path):
+                continue
+
+            print(sentiment_path)
+            
+            for filename in sorted(os.listdir(sentiment_path)):
+                if filename.endswith('.txt'):
+                    filepath = os.path.join(sentiment_path, filename)
+                    
+                    try:
+                        with open(filepath, 'r', encoding='utf-8') as f:
+                            phrase = f.read().strip()
+                            data.append({
+                                'phrase': phrase,
+                                'target': sentiment
+                            })
+                    except Exception as e:
+        
+        # Guardar CSV
+        if data:
+            df = pd.DataFrame(data)
+            output_path = os.path.join(output_dir, f'{dataset}_dataset.csv')
+            df.to_csv(output_path, index=False)
+            print(f" {output_path} creado con {len(df)} registros")
+            print("Muestra de datos:")
+            print(df.head(2))
+        else:
+            print(f" No se procesaron datos para {dataset}")
+    
+    return
+
+print(pregunta_01())
